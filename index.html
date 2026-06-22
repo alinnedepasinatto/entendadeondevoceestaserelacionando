@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descubra de onde você está se relacionando</title>
+
+  <style>
+    :root{
+      --pink:#ff4fb8; --red:#f0003c; --dark:#15111d; --muted:#6f6878;
+      --soft:#fff1f8; --line:rgba(240,0,60,.09); --card:#ffffff;
+      --shadow:0 24px 60px rgba(21,17,29,.10); --radius:26px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--dark);
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        radial-gradient(circle at 15% 20%, rgba(255,79,184,.16), transparent 28%),
+        radial-gradient(circle at 85% 25%, rgba(240,0,60,.10), transparent 30%),
+        #fff;
+      background-size:60px 60px, 60px 60px, auto, auto, auto;
+    }
+
+    .topbar{
+      width:100%;
+      background:linear-gradient(90deg,var(--red),var(--pink));
+      color:#fff;
+      text-align:center;
+      font-weight:900;
+      letter-spacing:.8px;
+      padding:10px 16px;
+      font-size:14px;
+      text-transform:uppercase;
+    }
+
+    .wrap{max-width:1120px;margin:0 auto;padding:60px 22px 80px}
+    .hero{max-width:960px;margin-bottom:36px}
+
+    .badge{
+      display:inline-flex;
+      padding:12px 20px;
+      border-radius:999px;
+      background:var(--soft);
+      color:var(--red);
+      font-weight:900;
+      font-size:14px;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      margin-bottom:28px;
+    }
+
+    h1{
+      font-size:clamp(42px,7vw,86px);
+      line-height:.95;
+      margin:0 0 26px;
+      letter-spacing:-4px;
+      font-weight:950;
+    }
+
+    h1 span{color:var(--pink)}
+
+    .subtitle{
+      max-width:800px;
+      font-size:clamp(20px,2.3vw,28px);
+      line-height:1.45;
+      color:var(--dark);
+      margin:0 0 18px;
+      font-weight:800;
+    }
+
+    .heroText{
+      max-width:780px;
+      font-size:19px;
+      line-height:1.6;
+      color:var(--muted);
+      margin:0;
+    }
+
+    .intro,.section{
+      background:#fff;
+      border:1px solid rgba(255,79,184,.20);
+      border-radius:var(--radius);
+      padding:30px;
+      box-shadow:var(--shadow);
+      margin:28px 0;
+    }
+
+    .intro h2,.section h2{
+      margin:0 0 10px;
+      font-size:30px;
+      letter-spacing:-1px;
+    }
+
+    .intro p,.section .note{
+      margin:0;
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.55;
+    }
+
+    .places{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:18px;
+      margin-top:24px;
+    }
+
+    .placeCard{
+      background:#fff;
+      border:1px solid rgba(255,79,184,.20);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .placeCard h3{margin:0 0 8px;font-size:22px}
+    .placeCard p{margin:0;color:var(--muted);font-size:16.5px;line-height:1.5}
+
+    .question{
+      border-top:1px solid rgba(21,17,29,.08);
+      padding:20px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .question:first-of-type{border-top:0}
+
+    .qtext{
+      font-size:19px;
+      line-height:1.4;
+      font-weight:700;
+    }
+
+    .qnum{color:var(--pink);font-weight:950;margin-right:8px}
+    .options{display:flex;gap:14px;flex-wrap:wrap}
+    .option{position:relative}
+    .option input{position:absolute;opacity:0;pointer-events:none}
+
+    .option label{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-width:130px;
+      padding:14px 22px;
+      border-radius:999px;
+      background:#fff;
+      border:2px solid rgba(21,17,29,.08);
+      box-shadow:0 12px 26px rgba(21,17,29,.07);
+      font-size:17px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .dot{width:10px;height:10px;border-radius:50%;background:#d8d8df}
+
+    .option input:checked + label{
+      border-color:var(--pink);
+      background:var(--soft);
+      color:var(--red);
+      transform:translateY(-1px);
+    }
+
+    .option input:checked + label .dot{
+      background:linear-gradient(90deg,var(--red),var(--pink));
+    }
+
+    .final{
+      background:linear-gradient(135deg,var(--red),var(--pink));
+      color:#fff;
+      border-radius:32px;
+      padding:34px;
+      box-shadow:0 30px 70px rgba(240,0,60,.25);
+      margin-top:34px;
+    }
+
+    .final h2{font-size:34px;margin:0 0 10px;letter-spacing:-1px}
+    .final p{font-size:18px;line-height:1.5;margin:0 0 20px;opacity:.94}
+
+    .summary{
+      background:#fff;
+      color:var(--dark);
+      border-radius:24px;
+      padding:22px;
+      margin-top:22px;
+    }
+
+    .actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      border:0;
+      cursor:pointer;
+      border-radius:999px;
+      padding:16px 24px;
+      font-size:16px;
+      font-weight:950;
+      transition:.18s ease;
+    }
+
+    .btn-primary{
+      background:linear-gradient(90deg,var(--red),var(--pink));
+      color:#fff;
+      box-shadow:0 18px 38px rgba(240,0,60,.25);
+    }
+
+    .btn-secondary{
+      background:#fff;
+      color:var(--red);
+      border:2px solid rgba(240,0,60,.20);
+    }
+
+    .small{color:var(--muted);font-size:13px;margin-top:12px}
+    .footer{text-align:center;color:var(--muted);font-size:14px;padding:28px 0 0}
+
+    @media(max-width:720px){
+      .wrap{padding:42px 16px 60px}
+      h1{letter-spacing:-2px}
+      .section,.intro,.final,.placeCard{padding:24px 18px}
+      .places{grid-template-columns:1fr}
+      .options{display:grid;grid-template-columns:1fr 1fr}
+      .option label{min-width:0;width:100%}
+      .actions{flex-direction:column;align-items:stretch}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">RELACIONAMENTOS CONSCIENTES</div>
+
+  <main class="wrap">
+
+
+      <h1>Descubra de onde você está <span>se relacionando</span></h1>
+
+      <p class="subtitle">
+        Quando não ocupamos nosso lugar de adulto na relação, o amor vira peso, cobrança ou carência.
+      </p>
+
+      <p class="heroText">
+        Este diagnóstico foi criado para ajudar você a perceber quais lugares emocionais estão influenciando o seu relacionamento hoje.
+        Não é sobre apontar culpados. É sobre trazer consciência aquilo que acontece sem que o casal perceba.
+      </p>
+    </section>
+
+    <section class="intro">
+      <h2>Os 7 lugares emocionais do relacionamento</h2>
+      <p>Antes de responder, entenda brevemente os lugares que podem aparecer quando o vínculo se desorganiza.</p>
+
+      <div class="places">
+        <div class="placeCard"><h3>🤍 Distância silenciosa</h3><p>Quando o casal continua junto, mas deixa de se encontrar emocionalmente.</p></div>
+        <div class="placeCard"><h3>🛡️ Defesa e reatividade</h3><p>Quando a conversa vira proteção, ataque ou justificativa, em vez de conexão.</p></div>
+        <div class="placeCard"><h3>⚖️ Desequilíbrio de troca</h3><p>Quando um sente que dá mais, carrega mais ou sustenta mais a relação.</p></div>
+        <div class="placeCard"><h3>👨‍👩‍👧 Pai ou mãe do parceiro</h3><p>Quando a relação deixa de ser encontro entre adultos e passa a ser cobrança, correção ou controle.</p></div>
+        <div class="placeCard"><h3>🆘 Salvador(a)</h3><p>Quando alguém tenta manter tudo funcionando sozinho e assume a responsabilidade pela relação inteira.</p></div>
+        <div class="placeCard"><h3>🚪 Fuga</h3><p>Quando o silêncio, o afastamento ou a evitação parecem mais seguros do que conversar.</p></div>
+        <div class="placeCard"><h3>👶 Lugar de criança</h3><p>Quando medos antigos, carências emocionais ou dores do passado começam a conduzir o relacionamento.</p></div>
+      </div>
+    </section>
+
+    <section class="intro">
+      <h2>Agora responda às perguntas</h2>
+      <p>
+        Respire antes de responder. Esse formulário não mede se o relacionamento está certo ou errado.
+        Ele apenas mostra onde o vínculo está pedindo mais consciência.
+      </p>
+    </section>
+
+    <form id="quiz"></form>
+
+    <section class="final">
+      <h2>Diagnóstico concluído</h2>
+      <p>
+        Ao clicar no botão abaixo, suas respostas serão enviadas automaticamente para o WhatsApp. 
+        Com base nelas, você receberá uma devolutiva personalizada,do lugar emocional que você está se relacionando hoje, e qual é o primeiro passo para um  relacionamento mais leve e feliz.
+      </p>
+
+      <div class="summary">
+        <strong>Você respondeu todas as perguntas.</strong>
+        <p class="small">Agora clique no botão abaixo para enviar suas respostas.</p>
+
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" id="btnCopy">Copiar respostas</button>
+          <a class="btn btn-primary" id="btnWhats" href="#" aria-disabled="true">
+            Enviar respostas e receber minha devolutiva
+          </a>
+        </div>
+
+        <div class="small" id="statusText">
+          Para liberar o envio, responda todas as perguntas.
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      © <span id="year"></span> • Relacionamentos Conscientes
+    </div>
+
+  </main>
+
+  <script>
+    const WHATS_NUMBER = "5549998110445";
+
+    const blocks = [
+      ["Distância silenciosa", "Quando o casal continua junto, mas deixa de se encontrar emocionalmente.", [
+        "Sentimos que conversamos mais sobre rotina do que sobre o que sentimos?",
+        "Mesmo estando juntos, existe sensação de afastamento emocional?",
+        "O silêncio entre nós pesa mais do que aproxima?",
+        "Nos encontramos pouco como casal, mesmo convivendo diariamente?"
+      ]],
+      ["Defesa e reatividade", "Quando a conversa vira proteção, ataque ou justificativa, em vez de conexão.", [
+        "Quando um fala, o outro já se defende?",
+        "As conversas costumam terminar sem entendimento real?",
+        "Evito determinados assuntos para não gerar conflito?",
+        "Sinto que preciso me proteger emocionalmente nas conversas?"
+      ]],
+      ["Desequilíbrio de troca", "Quando um sente que dá mais, carrega mais ou sustenta mais a relação.", [
+        "Sinto que me esforço mais do que o outro para manter a relação?",
+        "Costumo ceder para evitar problemas?",
+        "Já me senti injustiçado(a) ou sobrecarregado(a) na relação?",
+        "Sinto que carrego mais responsabilidades emocionais do que o outro?"
+      ]],
+      ["Pai ou mãe do parceiro", "Quando a relação deixa de ser encontro entre adultos e passa a ser cobrança, correção ou controle.", [
+        "Costumo corrigir ou orientar meu parceiro com frequência?",
+        "Sinto que preciso ensinar o outro a agir corretamente?",
+        "Me irrito quando o outro não faz as coisas da forma que considero certa?",
+        "Percebo que assumo responsabilidades que deveriam ser do outro?"
+      ]],
+      ["Salvador(a)", "Quando alguém tenta manter tudo funcionando sozinho e assume a responsabilidade pela relação inteira.", [
+        "Sinto que, se eu parar de tentar, o relacionamento desmorona?",
+        "Costumo resolver problemas que pertencem ao outro?",
+        "Tenho dificuldade em deixar que o outro assuma as próprias responsabilidades?",
+        "Frequentemente me sinto cansado(a) de carregar tudo sozinho(a)?"
+      ]],
+      ["Fuga", "Quando o silêncio, o afastamento ou a evitação parecem mais seguros do que conversar.", [
+        "Evito conversas difíceis?",
+        "Quando algo me incomoda, prefiro me fechar?",
+        "Tenho dificuldade de expressar o que realmente sinto?",
+        "Costumo me afastar emocionalmente diante dos conflitos?"
+      ]],
+      ["Lugar de criança", "Quando medos antigos, carências emocionais ou dores do passado começam a conduzir o relacionamento.", [
+        "Tenho medo constante de rejeição?",
+        "Sinto necessidade frequente de aprovação?",
+        "Reajo de forma intensa quando me sinto ignorado(a)?",
+        "Tenho medo de ser abandonado(a) ou deixado(a) para trás?"
+      ]]
+    ];
+
+    const form = document.getElementById("quiz");
+    let allQuestions = [];
+    let qIndex = 1;
+
+    blocks.forEach(block => {
+      const [title, note, qs] = block;
+      const section = document.createElement("section");
+      section.className = "section";
+      section.innerHTML = `<h2>${title}</h2><p class="note">${note}</p>`;
+
+      qs.forEach(q => {
+        allQuestions.push({ block:title, question:q });
+        section.innerHTML += `
+          <div class="question">
+            <div class="qtext"><span class="qnum">${qIndex}.</span>${q}</div>
+            <div class="options">
+              <span class="option">
+                <input type="radio" name="q${qIndex}" id="q${qIndex}s" value="SIM" required>
+                <label for="q${qIndex}s"><span class="dot"></span>SIM</label>
+              </span>
+              <span class="option">
+                <input type="radio" name="q${qIndex}" id="q${qIndex}n" value="NÃO">
+                <label for="q${qIndex}n"><span class="dot"></span>NÃO</label>
+              </span>
+            </div>
+          </div>
+        `;
+        qIndex++;
+      });
+
+      form.appendChild(section);
+    });
+
+    const btnWhats = document.getElementById("btnWhats");
+    const btnCopy = document.getElementById("btnCopy");
+    const statusText = document.getElementById("statusText");
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function getAnswers(){
+      let yes = 0, no = 0, miss = 0;
+      const answers = [];
+
+      for(let i=1; i<=28; i++){
+        const chosen = form.querySelector(`input[name="q${i}"]:checked`);
+        const item = allQuestions[i-1];
+
+        if(!chosen){
+          miss++;
+          answers.push(`${i}. — [${item.block}] ${item.question}`);
+        } else {
+          if(chosen.value === "SIM") yes++;
+          if(chosen.value === "NÃO") no++;
+          answers.push(`${i}. ${chosen.value} — [${item.block}] ${item.question}`);
+        }
+      }
+
+      return { yes, no, miss, answers };
+    }
+
+    function buildMessage(){
+      const { yes, no, answers } = getAnswers();
+
+      return `DIAGNÓSTICO RELACIONAMENTOS CONSCIENTES
+
+Olá Evandro.
+
+Acabei de concluir o formulário:
+Descubra de onde você está se relacionando.
+
+Resumo interno:
+• SIM: ${yes}
+• NÃO: ${no}
+
+Minhas respostas:
+
+${answers.join("\n")}
+
+Quero receber minha devolutiva explicando:
+
+• Qual padrão apareceu com mais força
+• De onde estou me relacionando hoje
+• Qual é o primeiro passo para iniciar uma mudança consciente no meu relacionamento`;
+    }
+
+    function updateUI(){
+      const { miss } = getAnswers();
+      const allDone = miss === 0;
+
+      btnWhats.style.opacity = allDone ? "1" : ".55";
+      btnWhats.style.pointerEvents = allDone ? "auto" : "none";
+      btnWhats.setAttribute("aria-disabled", allDone ? "false" : "true");
+
+      statusText.textContent = allDone
+        ? "Tudo pronto. Clique no botão para enviar suas respostas."
+        : `Para liberar o envio, responda todas as perguntas. Faltam: ${miss}`;
+
+      btnWhats.href = allDone
+        ? `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(buildMessage())}`
+        : "#";
+    }
+
+    form.addEventListener("change", updateUI);
+
+    btnCopy.addEventListener("click", async () => {
+      const { miss } = getAnswers();
+
+      if(miss !== 0){
+        alert("Responda todas as perguntas para copiar as respostas.");
+        return;
+      }
+
+      try{
+        await navigator.clipboard.writeText(buildMessage());
+        btnCopy.textContent = "Copiado!";
+        setTimeout(() => btnCopy.textContent = "Copiar respostas", 1300);
+      } catch(e){
+        alert("Não consegui copiar automaticamente. Use o botão do WhatsApp.");
+      }
+    });
+
+    updateUI();
+  </script>
+</body>
+</html>
