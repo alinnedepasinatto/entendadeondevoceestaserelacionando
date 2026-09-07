@@ -315,37 +315,43 @@
     const WHATS_NUMBER = "5549999728631";
 
     const blocks = [
+      ["Distância silenciosa", "Quando o casal continua junto, mas deixa de se encontrar emocionalmente.", [
         "Sentimos que conversamos mais sobre rotina do que sobre o que sentimos?",
         "Mesmo estando juntos, existe sensação de afastamento emocional?",
         "O silêncio entre nós pesa mais do que aproxima?",
         "Nos encontramos pouco como casal, mesmo convivendo diariamente?"
       ]],
-      
+      ["Defesa e reatividade", "Quando a conversa vira proteção, ataque ou justificativa, em vez de conexão.", [
         "Quando um fala, o outro já se defende?",
         "As conversas costumam terminar sem entendimento real?",
         "Evito determinados assuntos para não gerar conflito?",
         "Sinto que preciso me proteger emocionalmente nas conversas?"
       ]],
+      ["Desequilíbrio de troca", "Quando um sente que dá mais, carrega mais ou sustenta mais a relação.", [
         "Sinto que me esforço mais do que o outro para manter a relação?",
         "Costumo ceder para evitar problemas?",
         "Já me senti injustiçado(a) ou sobrecarregado(a) na relação?",
         "Sinto que carrego mais responsabilidades emocionais do que o outro?"
       ]],
+      ["Pai ou mãe do parceiro", "Quando a relação deixa de ser encontro entre adultos e passa a ser cobrança, correção ou controle.", [
         "Costumo corrigir ou orientar meu parceiro com frequência?",
         "Sinto que preciso ensinar o outro a agir corretamente?",
         "Me irrito quando o outro não faz as coisas da forma que considero certa?",
         "Percebo que assumo responsabilidades que deveriam ser do outro?"
       ]],
+      ["Salvador(a)", "Quando alguém tenta manter tudo funcionando sozinho e assume a responsabilidade pela relação inteira.", [
         "Sinto que, se eu parar de tentar, o relacionamento desmorona?",
         "Costumo resolver problemas que pertencem ao outro?",
         "Tenho dificuldade em deixar que o outro assuma as próprias responsabilidades?",
         "Frequentemente me sinto cansado(a) de carregar tudo sozinho(a)?"
       ]],
+      ["Fuga", "Quando o silêncio, o afastamento ou a evitação parecem mais seguros do que conversar.", [
         "Evito conversas difíceis?",
         "Quando algo me incomoda, prefiro me fechar?",
         "Tenho dificuldade de expressar o que realmente sinto?",
         "Costumo me afastar emocionalmente diante dos conflitos?"
       ]],
+      ["Lugar de criança", "Quando medos antigos, carências emocionais ou dores do passado começam a conduzir o relacionamento.", [
         "Tenho medo constante de rejeição?",
         "Sinto necessidade frequente de aprovação?",
         "Reajo de forma intensa quando me sinto ignorado(a)?",
@@ -361,7 +367,7 @@
       const [title, note, qs] = block;
       const section = document.createElement("section");
       section.className = "section";
-      section.innerHTML = `<h2>${title}</h2><p class="note">${note}</p>`;
+      section.innerHTML = ``;
 
       qs.forEach(q => {
         allQuestions.push({ block:title, question:q });
@@ -401,11 +407,11 @@
 
         if(!chosen){
           miss++;
-          answers.push(`${i}. — [${item.block}] ${item.question}`);
+          answers.push(`${i}. — ${item.question}`);
         } else {
           if(chosen.value === "SIM") yes++;
           if(chosen.value === "NÃO") no++;
-          answers.push(`${i}. ${chosen.value} — [${item.block}] ${item.question}`);
+          answers.push(`${i}. ${chosen.value} — ${item.question}`);
         }
       }
 
@@ -430,7 +436,11 @@ Minhas respostas:
 
 ${answers.join("\n")}
 
-Quero receber minha devolutiva.
+Quero receber minha devolutiva explicando:
+
+• Qual padrão apareceu com mais força
+• De onde estou me relacionando hoje
+• Qual é o primeiro passo para iniciar uma mudança consciente no meu relacionamento`;
     }
 
     function updateUI(){
