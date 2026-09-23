@@ -5,6 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Descubra de onde você está se relacionando</title>
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0N8KM6YLCL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-0N8KM6YLCL');
+
+    function trackEvent(eventName, params = {}) {
+      if (typeof gtag === "function") {
+        gtag("event", eventName, params);
+      }
+    }
+
+    trackEvent("diagnostico_aberto", {
+      page_title: "Diagnóstico Relacionamentos Conscientes"
+    });
+  </script>
+
+
   <style>
     :root{
       --pink:#ff4fb8; --red:#f0003c; --dark:#15111d; --muted:#6f6878;
@@ -314,6 +334,11 @@
   <script>
     const WHATS_NUMBER = "5549999728631";
 
+    let primeiraRespostaRegistrada = false;
+    let diagnosticoConcluidoRegistrado = false;
+    let whatsappRegistrado = false;
+    let copiaRegistrada = false;
+
     const blocks = [
       ["Distância silenciosa", "Quando o casal continua junto, mas deixa de se encontrar emocionalmente.", [
         "Sentimos que conversamos mais sobre rotina do que sobre o que sentimos?",
@@ -367,7 +392,6 @@
       const [title, note, qs] = block;
       const section = document.createElement("section");
       section.className = "section";
-      section.innerHTML = ``;
 
       qs.forEach(q => {
         allQuestions.push({ block:title, question:q });
@@ -418,14 +442,40 @@
       return { yes, no, miss, answers };
     }
 
+    function getDominantPlace(){
+      const placeScores = {};
+
+      blocks.forEach(block => {
+        placeScores[block[0]] = 0;
+      });
+
+      for(let i=1; i<=28; i++){
+        const chosen = form.querySelector(`input[name="q${i}"]:checked`);
+        const item = allQuestions[i-1];
+
+        if(chosen && chosen.value === "SIM"){
+          placeScores[item.block] = (placeScores[item.block] || 0) + 1;
+        }
+      }
+
+      const sorted = Object.entries(placeScores).sort((a,b) => b[1] - a[1]);
+
+      return {
+        principal: sorted[0] ? sorted[0][0] : "",
+        principalPontuacao: sorted[0] ? sorted[0][1] : 0,
+        secundario: sorted[1] ? sorted[1][0] : "",
+        secundarioPontuacao: sorted[1] ? sorted[1][1] : 0
+      };
+    }
+
     function buildMessage(){
       const { yes, no, answers } = getAnswers();
 
-      return `DIAGNÓSTICO OS 7 LUGARES EMOCIONAIS NO RELACIONAMENTO
+      return `DIAGNÓSTICO RELACIONAMENTOS OS 7 LUGARES EMOCIONAIS NO RELACIONAMENTO
 
-Olá Alinne.
+Olá Evandro.
 
-Acabei de concluir o diagnóstico: 
+Acabei de concluir o diagnóstico:
 Descubra de onde você está se relacionando.
 
 Resumo interno:
@@ -443,6 +493,23 @@ Quero receber minha devolutiva...
       const { miss } = getAnswers();
       const allDone = miss === 0;
 
+      if(allDone && !diagnosticoConcluidoRegistrado){
+        diagnosticoConcluidoRegistrado = true;
+
+        const dominant = getDominantPlace();
+
+        trackEvent("diagnostico_concluido", {
+          perguntas: 28,
+          sim: getAnswers().yes,
+          nao: getAnswers().no,
+          lugar_principal: dominant.principal,
+          lugar_principal_pontuacao: dominant.principalPontuacao,
+          lugar_secundario: dominant.secundario,
+          lugar_secundario_pontuacao: dominant.secundarioPontuacao,
+          page_title: "Diagnóstico Relacionamentos Conscientes"
+        });
+      }
+
       btnWhats.style.opacity = allDone ? "1" : ".55";
       btnWhats.style.pointerEvents = allDone ? "auto" : "none";
       btnWhats.setAttribute("aria-disabled", allDone ? "false" : "true");
@@ -456,7 +523,41 @@ Quero receber minha devolutiva...
         : "#";
     }
 
-    form.addEventListener("change", updateUI);
+    form.addEventListener("change", () => {
+      if(!primeiraRespostaRegistrada){
+        primeiraRespostaRegistrada = true;
+        trackEvent("diagnostico_primeira_resposta", {
+          page_title: "Diagnóstico Relacionamentos Conscientes"
+        });
+      }
+
+      updateUI();
+    });
+
+    btnWhats.addEventListener("click", () => {
+      const { miss, yes, no } = getAnswers();
+
+      if(miss !== 0){
+        return;
+      }
+
+      if(!whatsappRegistrado){
+        whatsappRegistrado = true;
+
+        const dominant = getDominantPlace();
+
+        trackEvent("whatsapp_diagnostico", {
+          destino: "whatsapp",
+          sim: yes,
+          nao: no,
+          lugar_principal: dominant.principal,
+          lugar_principal_pontuacao: dominant.principalPontuacao,
+          lugar_secundario: dominant.secundario,
+          lugar_secundario_pontuacao: dominant.secundarioPontuacao,
+          page_title: "Diagnóstico Relacionamentos Conscientes"
+        });
+      }
+    });
 
     btnCopy.addEventListener("click", async () => {
       const { miss } = getAnswers();
@@ -468,6 +569,22 @@ Quero receber minha devolutiva...
 
       try{
         await navigator.clipboard.writeText(buildMessage());
+
+        if(!copiaRegistrada){
+          copiaRegistrada = true;
+
+          const dominant = getDominantPlace();
+
+          trackEvent("diagnostico_respostas_copiadas", {
+            destino: "copiar_respostas",
+            lugar_principal: dominant.principal,
+            lugar_principal_pontuacao: dominant.principalPontuacao,
+            lugar_secundario: dominant.secundario,
+            lugar_secundario_pontuacao: dominant.secundarioPontuacao,
+            page_title: "Diagnóstico Relacionamentos Conscientes"
+          });
+        }
+
         btnCopy.textContent = "Copiado!";
         setTimeout(() => btnCopy.textContent = "Copiar respostas", 1300);
       } catch(e){
